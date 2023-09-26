@@ -32,7 +32,7 @@ app.MapPost("api/links", async (AddLinkDto dto, ILinksRepository repository) =>
         return Results.BadRequest();
     }
 
-    return Results.Ok();
+    return Results.Ok(link);
 });
 
 app.MapGet("{code}", async (string code, ILinksRepository repository) =>
