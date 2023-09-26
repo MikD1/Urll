@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urll.Core", "Urll.Core\Urll.Core.csproj", "{64B4A249-C64A-4B60-B0AC-6054FE8CDD11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urll.TelegramBot", "Urll.TelegramBot\Urll.TelegramBot.csproj", "{61D7579E-164B-4127-BD04-956B715F1C90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urll.Tests", "Urll.Tests\Urll.Tests.csproj", "{A4A1F7EC-4F4D-46CD-8A7E-94855B12917A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64B4A249-C64A-4B60-B0AC-6054FE8CDD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64B4A249-C64A-4B60-B0AC-6054FE8CDD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64B4A249-C64A-4B60-B0AC-6054FE8CDD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64B4A249-C64A-4B60-B0AC-6054FE8CDD11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61D7579E-164B-4127-BD04-956B715F1C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61D7579E-164B-4127-BD04-956B715F1C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61D7579E-164B-4127-BD04-956B715F1C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61D7579E-164B-4127-BD04-956B715F1C90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A1F7EC-4F4D-46CD-8A7E-94855B12917A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A1F7EC-4F4D-46CD-8A7E-94855B12917A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A1F7EC-4F4D-46CD-8A7E-94855B12917A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A1F7EC-4F4D-46CD-8A7E-94855B12917A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
