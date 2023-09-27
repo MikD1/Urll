@@ -17,11 +17,18 @@ public class Link
         return new Link(url, code);
     }
 
-    public DateTime Created { get; }
+    public Link(DateTime created, string url, string code)
+    {
+        Created = created;
+        Url = url;
+        Code = code;
+    }
 
-    public string Url { get; }
+    public DateTime Created { get; private set; }
 
-    public string Code { get; }
+    public string Url { get; private set; }
+
+    public string Code { get; private set; }
 
     private static List<string> ValidateUrl(string url)
     {
