@@ -25,7 +25,12 @@ app.MapGet("api/links/{code}", async (string code, ILinksRepository repository) 
 
 app.MapPost("api/links", async (AddLinkDto dto, ILinksRepository repository) =>
 {
-    Link link = new(dto.Url, dto.Code);
+    Link? link = Link.Create(dto.Url, dto.Code, out string[] validationResult);
+    if (link is null)
+    {
+        return Results.BadRequest(validationResult);
+    }
+
     bool result = await repository.Add(link);
     if (!result)
     {
