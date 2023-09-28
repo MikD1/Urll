@@ -13,7 +13,7 @@ public class RedisLinksRepository : ILinksRepository
 
     public async Task<Link?> GetOrDefault(string code)
     {
-        RedisValue redisValue = await _db.StringGetAsync(code);
+        RedisValue redisValue = await _db.StringGetAsync($"{LinkKeyPrefix}:{code}");
         if (redisValue.IsNull)
         {
             return null;

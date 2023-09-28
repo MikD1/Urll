@@ -42,6 +42,7 @@ app.MapPost("api/links", async (AddLinkDto dto, ILinksRepository repository) =>
 
 app.MapGet("{code}", async (string code, ILinksRepository repository) =>
 {
+    // TODO: Validate code
     Link? link = await repository.GetOrDefault(code);
     if (link is null)
     {
