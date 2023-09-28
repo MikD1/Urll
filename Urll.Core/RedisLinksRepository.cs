@@ -1,22 +1,33 @@
-﻿using System.Collections.Concurrent;
-using System.Text.Json;
+﻿using System.Text.Json;
+using StackExchange.Redis;
 
 namespace Urll.Core;
 
 public class RedisLinksRepository : ILinksRepository
 {
-    public Task<Link?> GetOrDefault(string code)
+    public RedisLinksRepository(ConnectionMultiplexer connection)
     {
-        _data.TryGetValue(code, out string? json);
-        TryDeserializeLink(json, out Link? link);
-        return Task.FromResult(link);
+        _connection = connection;
+        _db = _connection.GetDatabase();
     }
 
-    public Task<bool> Add(Link link)
+    public async Task<Link?> GetOrDefault(string code)
+    {
+        RedisValue redisValue = await _db.StringGetAsync(code);
+        if (redisValue.IsNull)
+        {
+            return null;
+        }
+
+        TryDeserializeLink(redisValue.ToString(), out Link? link);
+        return link;
+    }
+
+    public async Task<bool> Add(Link link)
     {
         string json = JsonSerializer.Serialize(link);
-        bool result = _data.TryAdd(link.Code, json);
-        return Task.FromResult(result);
+        bool success = await _db.StringSetAsync($"{LinkKeyPrefix}:{link.Code}", json, when: When.NotExists);
+        return success;
     }
 
     private bool TryDeserializeLink(string? json, out Link? link)
@@ -40,5 +51,8 @@ public class RedisLinksRepository : ILinksRepository
         }
     }
 
-    private readonly ConcurrentDictionary<string, string> _data = new();
+    private const string LinkKeyPrefix = "link";
+
+    private readonly ConnectionMultiplexer _connection;
+    private readonly IDatabase _db;
 }
