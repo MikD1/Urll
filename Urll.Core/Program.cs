@@ -1,9 +1,10 @@
+using StackExchange.Redis;
 using Urll.Core;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<ILinksRepository, RedisLinksRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+await AddRedisConnection(builder.Services);
 
 WebApplication app = builder.Build();
 app.UseSwagger();
@@ -53,3 +54,11 @@ app.MapGet("{code}", async (string code, ILinksRepository repository) =>
 });
 
 app.Run();
+
+async Task AddRedisConnection(IServiceCollection services)
+{
+    string redisConnectionString = builder.Configuration.GetConnectionString("Redis")
+        ?? throw new Exception("Missing Redis connection string");
+    services.AddSingleton(await ConnectionMultiplexer.ConnectAsync(redisConnectionString));
+    services.AddTransient<ILinksRepository, RedisLinksRepository>();
+}
