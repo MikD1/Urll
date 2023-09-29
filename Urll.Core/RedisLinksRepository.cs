@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Permissions;
+using System.Text.Json;
 using StackExchange.Redis;
 
 namespace Urll.Core;
@@ -8,12 +9,44 @@ public class RedisLinksRepository : ILinksRepository
     public RedisLinksRepository(ConnectionMultiplexer connection)
     {
         _connection = connection;
-        _db = _connection.GetDatabase();
+    }
+
+    public async Task<IReadOnlyCollection<Link>> GetAll()
+    {
+        IServer[] servers = _connection.GetServers();
+        List<string> keys = new();
+        foreach (IServer server in servers)
+        {
+            await foreach (RedisKey redisKey in server.KeysAsync(pattern: LinkKeyPrefix + "*"))
+            {
+                string key = redisKey.ToString();
+                if (keys.Contains(key))
+                {
+                    continue;
+                }
+
+                keys.Add(key);
+            }
+        }
+
+        List<Link> links = new();
+        foreach (string key in keys)
+        {
+            string code = key.Split(':')[1];
+            Link? link = await GetOrDefault(code);
+            if (link is not null)
+            {
+                links.Add(link);
+            }
+        }
+
+        return links;
     }
 
     public async Task<Link?> GetOrDefault(string code)
     {
-        RedisValue redisValue = await _db.StringGetAsync($"{LinkKeyPrefix}:{code}");
+        IDatabase db = _connection.GetDatabase();
+        RedisValue redisValue = await db.StringGetAsync(LinkKeyPrefix + code);
         if (redisValue.IsNull)
         {
             return null;
@@ -26,8 +59,15 @@ public class RedisLinksRepository : ILinksRepository
     public async Task<bool> Add(Link link)
     {
         string json = JsonSerializer.Serialize(link);
-        bool success = await _db.StringSetAsync($"{LinkKeyPrefix}:{link.Code}", json, when: When.NotExists);
+        IDatabase db = _connection.GetDatabase();
+        bool success = await db.StringSetAsync(LinkKeyPrefix + link.Code, json, when: When.NotExists);
         return success;
+    }
+
+    public async Task<bool> Delete(string code)
+    {
+        IDatabase db = _connection.GetDatabase();
+        return await db.KeyDeleteAsync(LinkKeyPrefix + code);
     }
 
     private bool TryDeserializeLink(string? json, out Link? link)
@@ -51,8 +91,7 @@ public class RedisLinksRepository : ILinksRepository
         }
     }
 
-    private const string LinkKeyPrefix = "link";
+    private const string LinkKeyPrefix = "link:";
 
     private readonly ConnectionMultiplexer _connection;
-    private readonly IDatabase _db;
 }
