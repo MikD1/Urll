@@ -1,5 +1,4 @@
-﻿using System.Security.Permissions;
-using System.Text.Json;
+﻿using System.Text.Json;
 using StackExchange.Redis;
 
 namespace Urll.Core;

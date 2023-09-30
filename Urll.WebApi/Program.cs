@@ -9,20 +9,6 @@ await AddRedisConnection(builder.Services);
 WebApplication app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-app.MapGet("{code}", async (string code, ILinksRepository repository) =>
-{
-    // TODO: Validate code
-    Link? link = await repository.GetOrDefault(code);
-    if (link is null)
-    {
-        return Results.NotFound();
-    }
-
-    return Results.Redirect(link.Url);
-});
 
 app.MapGet("api/links", async (ILinksRepository repository) =>
 {
