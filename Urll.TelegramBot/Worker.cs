@@ -86,7 +86,7 @@ public class Worker : IHostedService
             string[] parts = messageText.Split(' ');
             if (parts.Length is 2)
             {
-                await SendMessage(userId, $"Add Link\nUrl: ${parts[0]}\nCode '{parts[1]}'");
+                await SendMessage(userId, $"Add Link\nUrl: '{parts[0]}'\nCode: '{parts[1]}'");
             }
         }
 
