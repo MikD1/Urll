@@ -23,18 +23,8 @@ end
 
 
 ## Telegram bot commands
-
-### /start
-Show help
-
-### {url} {code}
-Add Link
-
-### /list
-List all Links
-
-### /get {code}
-Return Link by code
-
-### /delete {code}
-Delete Link
+- {url} {code} - Add Link
+- /start - Show help
+- /list - List all Links
+- /get {code} - Return Link by code
+- /delete {code} - Delete Link";

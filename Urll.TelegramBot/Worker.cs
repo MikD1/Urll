@@ -55,40 +55,10 @@ public class Worker : IHostedService
             return;
         }
 
+        CommandsExecutor executor = new();
+        string result = await executor.Execute(messageText);
         string userId = update.Message.Chat.Id.ToString();
-
-        if (string.Equals(messageText, "/start", StringComparison.OrdinalIgnoreCase))
-        {
-            await SendMessage(userId, "Hello! This is Urll bot");
-        }
-        else if (string.Equals(messageText, "/list", StringComparison.OrdinalIgnoreCase))
-        {
-            await SendMessage(userId, "List all Links");
-        }
-        else if (messageText.StartsWith("/get", StringComparison.OrdinalIgnoreCase))
-        {
-            string[] parts = messageText.Split(' ');
-            if (parts.Length is 2)
-            {
-                await SendMessage(userId, $"Get Link with code '{parts[1]}'");
-            }
-        }
-        else if (messageText.StartsWith("/delete", StringComparison.OrdinalIgnoreCase))
-        {
-            string[] parts = messageText.Split(' ');
-            if (parts.Length is 2)
-            {
-                await SendMessage(userId, $"Delete Link with code '{parts[1]}'");
-            }
-        }
-        else
-        {
-            string[] parts = messageText.Split(' ');
-            if (parts.Length is 2)
-            {
-                await SendMessage(userId, $"Add Link\nUrl: '{parts[0]}'\nCode: '{parts[1]}'");
-            }
-        }
+        await SendMessage(userId, result);
 
         _logger.LogInformation($"HandleTextUpdate: '{userId}' : '{messageText}'");
     }
