@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Urll.Core\Urll.Core.csproj" />
+    <ProjectReference Include="..\Urll.Links\Urll.Links.csproj" />
   </ItemGroup>
 
 </Project>

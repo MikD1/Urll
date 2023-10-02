@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using StackExchange.Redis;
 
-namespace Urll.Core;
+namespace Urll.Links;
 
 public class RedisLinksRepository : ILinksRepository
 {

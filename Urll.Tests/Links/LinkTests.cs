@@ -1,4 +1,4 @@
-﻿using Urll.Core;
+﻿using Urll.Links;
 
 namespace Urll.Tests;
 

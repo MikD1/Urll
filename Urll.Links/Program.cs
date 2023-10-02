@@ -1,5 +1,6 @@
 using StackExchange.Redis;
-using Urll.Core;
+using Urll.Links;
+using Urll.Links.Contracts.Dto;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +32,7 @@ app.MapGet("api/links/{code}", async (string code, ILinksRepository repository) 
     return Results.Ok(dto);
 });
 
-app.MapPost("api/links", async (AddLinkDto dto, ILinksRepository repository) =>
+app.MapPost("api/links", async (LinkAddDto dto, ILinksRepository repository) =>
 {
     Link? link = Link.Create(dto.Url, dto.Code, out string[] validationResult);
     if (link is null)

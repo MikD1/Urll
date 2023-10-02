@@ -1,4 +1,4 @@
-﻿namespace Urll.Core;
+﻿namespace Urll.Links;
 
 public interface ILinksRepository
 {

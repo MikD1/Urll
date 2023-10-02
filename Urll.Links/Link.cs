@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Urll.Core;
+namespace Urll.Links;
 
 public class Link
 {

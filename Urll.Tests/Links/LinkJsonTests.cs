@@ -1,20 +1,20 @@
 ﻿using System.Text.Json;
-using Urll.Core;
+using Urll.Links;
 
-namespace Urll.Tests;
+namespace Urll.Tests.Links;
 
 [TestClass]
 public class LinkJsonTests
 {
     [TestMethod]
-    public void Link_SerializeAndDesirialize()
+    public void Link_SerializeAndDeserialize()
     {
         Link? link = Link.Create("http://urll.dev", "url", out string[] _);
 
         string json = JsonSerializer.Serialize(link);
-        Link? desirializedLink = JsonSerializer.Deserialize<Link>(json);
+        Link? deserializedLink = JsonSerializer.Deserialize<Link>(json);
 
-        Assert.IsNotNull(desirializedLink);
+        Assert.IsNotNull(deserializedLink);
         Assert.AreNotEqual(default(DateTime), link?.Created);
         Assert.AreEqual("http://urll.dev", link?.Url);
         Assert.AreEqual("url", link?.Code);
