@@ -5,7 +5,7 @@ using Urll.Links.Contracts.Dto;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-await AddRedisConnection(builder.Services);
+await AddRedisConnection(builder);
 
 WebApplication app = builder.Build();
 app.UseSwagger();
@@ -22,6 +22,7 @@ app.MapGet("api/links", async (ILinksRepository repository) =>
 
 app.MapGet("api/links/{code}", async (string code, ILinksRepository repository) =>
 {
+    // TODO: Validate code
     Link? link = await repository.GetOrDefault(code);
     if (link is null)
     {
@@ -62,10 +63,11 @@ app.MapDelete("api/links/{code}", async (string code, ILinksRepository repositor
 
 app.Run();
 
-async Task AddRedisConnection(IServiceCollection services)
+async Task AddRedisConnection(WebApplicationBuilder builder)
 {
     string redisConnectionString = builder.Configuration.GetConnectionString("Redis")
         ?? throw new Exception("Missing Redis connection string");
-    services.AddSingleton(await ConnectionMultiplexer.ConnectAsync(redisConnectionString));
-    services.AddTransient<ILinksRepository, RedisLinksRepository>();
+    builder.Services
+        .AddSingleton(await ConnectionMultiplexer.ConnectAsync(redisConnectionString))
+        .AddTransient<ILinksRepository, RedisLinksRepository>();
 }

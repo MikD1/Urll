@@ -1,14 +1,19 @@
-﻿using Urll.Links.Contracts.Dto;
+﻿using Refit;
+using Urll.Links.Contracts.Dto;
 
 namespace Urll.Links.Contracts;
 
 public interface ILinksClient
 {
-    Task<LinkDto[]> GetAll();
+    [Get("/api/links")]
+    Task<IApiResponse<LinkDto[]>> GetAll();
 
-    Task<LinkDto> Get(string code);
+    [Get("/api/links/{code}")]
+    Task<IApiResponse<LinkDto>> Get(string code);
 
-    Task Add(LinkAddDto link);
+    [Post("/api/links")]
+    Task<IApiResponse> Add(LinkAddDto link);
 
-    Task Delete(string code);
+    [Delete("/api/links/code")]
+    Task<IApiResponse> Delete(string code);
 }

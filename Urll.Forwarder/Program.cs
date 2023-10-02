@@ -1,7 +1,9 @@
+using Refit;
 using Urll.Links.Contracts;
 using Urll.Links.Contracts.Dto;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+AddLinksClient(builder);
 
 WebApplication app = builder.Build();
 app.UseDefaultFiles();
@@ -9,18 +11,29 @@ app.UseStaticFiles();
 
 app.MapGet("{code}", async (string code, ILinksClient client) =>
 {
-    // TODO: Validate code
-    try
+    IApiResponse<LinkDto> response = await client.Get(code);
+    if (!response.IsSuccessStatusCode)
     {
-        LinkDto link = await client.Get(code);
-        return Results.Redirect(link.Url);
+        return Results.StatusCode((int)response.StatusCode);
     }
-    catch (Exception ex)
+
+    LinkDto? link = response.Content;
+    if (link is null)
     {
-        // TODO: Analyze exception
-        Console.WriteLine(ex);
-        return Results.NotFound();
+        return Results.Problem("Received empty content");
     }
+
+    return Results.Redirect(link.Url);
 });
 
 app.Run();
+
+void AddLinksClient(WebApplicationBuilder builder)
+{
+    string address = builder.Configuration["LinksServiceAddress"]
+        ?? throw new Exception("Missing Links Service address");
+
+    builder.Services
+        .AddRefitClient<ILinksClient>()
+        .ConfigureHttpClient(c => c.BaseAddress = new Uri(address));
+}

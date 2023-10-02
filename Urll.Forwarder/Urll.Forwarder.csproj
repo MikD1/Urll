@@ -8,4 +8,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Urll.Links.Contracts\Urll.Links.Contracts.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="refit" Version="7.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+  </ItemGroup>
 </Project>
