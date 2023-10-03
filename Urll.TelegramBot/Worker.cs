@@ -4,15 +4,17 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Urll.Links.Contracts;
 
 namespace Urll.TelegramBot;
 
 public class Worker : IHostedService
 {
-    public Worker(ILogger<Worker> logger, IConfiguration configuration)
+    public Worker(ILogger<Worker> logger, IConfiguration configuration, ILinksClient linksClient)
     {
         _logger = logger;
         _configuration = configuration;
+        _linksClient = linksClient;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -55,7 +57,7 @@ public class Worker : IHostedService
             return;
         }
 
-        CommandsExecutor executor = new();
+        CommandsExecutor executor = new(_linksClient);
         string result = await executor.Execute(messageText);
         string userId = update.Message.Chat.Id.ToString();
         await SendMessage(userId, result);
@@ -78,6 +80,7 @@ public class Worker : IHostedService
 
     private readonly ILogger<Worker> _logger;
     private readonly IConfiguration _configuration;
+    private readonly ILinksClient _linksClient;
     private ITelegramBotClient _botClient = default!;
     private CancellationTokenSource _receivingCts = default!;
 }

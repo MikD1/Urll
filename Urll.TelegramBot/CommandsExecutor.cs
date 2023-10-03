@@ -1,7 +1,17 @@
-﻿namespace Urll.TelegramBot;
+﻿using System.Text;
+using Refit;
+using Urll.Links.Contracts;
+using Urll.Links.Contracts.Dto;
+
+namespace Urll.TelegramBot;
 
 public class CommandsExecutor
 {
+    public CommandsExecutor(ILinksClient linksClient)
+    {
+        _linksClient = linksClient;
+    }
+
     public async Task<string> Execute(string input)
     {
         string[] args = input.Split(' ');
@@ -49,8 +59,19 @@ public class CommandsExecutor
             return GetHelpText();
         }
 
-        await Task.Delay(10);
-        return "List all Links";
+        IApiResponse<LinkDto[]> apiResponse = await _linksClient.GetAll();
+        if (!apiResponse.IsSuccessStatusCode || apiResponse.Content is null)
+        {
+            return GetErrorMessage(apiResponse);
+        }
+
+        StringBuilder builder = new();
+        foreach (LinkDto link in apiResponse.Content)
+        {
+            builder.AppendLine($"{link.Code}: {link.Url}");
+        }
+
+        return builder.ToString();
     }
 
     private async Task<string> ExecuteGetCommand(string[] args)
@@ -60,8 +81,13 @@ public class CommandsExecutor
             return GetHelpText();
         }
 
-        await Task.Delay(10);
-        return $"Get Link with code '{args[0]}'";
+        IApiResponse<LinkDto> apiResponse = await _linksClient.Get(args[0]);
+        if (!apiResponse.IsSuccessStatusCode || apiResponse.Content is null)
+        {
+            return GetErrorMessage(apiResponse);
+        }
+
+        return apiResponse.Content.Url;
     }
 
     private async Task<string> ExecuteDeleteCommand(string[] args)
@@ -71,8 +97,13 @@ public class CommandsExecutor
             return GetHelpText();
         }
 
-        await Task.Delay(10);
-        return $"Delete Link with code '{args[0]}'";
+        IApiResponse apiResponse = await _linksClient.Delete(args[0]);
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            return GetErrorMessage(apiResponse);
+        }
+
+        return "Link deleted";
     }
 
     private async Task<string> ExecuteAddCommand(string[] args)
@@ -82,7 +113,20 @@ public class CommandsExecutor
             return GetHelpText();
         }
 
-        await Task.Delay(10);
-        return $"Add Link\nUrl: '{args[0]}'\nCode: '{args[1]}'";
+        LinkAddDto dto = new(args[0], args[1]);
+        IApiResponse apiResponse = await _linksClient.Add(dto);
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            return GetErrorMessage(apiResponse);
+        }
+
+        return "Link added";
     }
+
+    private string GetErrorMessage(IApiResponse apiResponse)
+    {
+        return apiResponse.Error?.Message ?? "Command failed";
+    }
+
+    private readonly ILinksClient _linksClient;
 }

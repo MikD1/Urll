@@ -27,4 +27,4 @@ end
 - /start - Show help
 - /list - List all Links
 - /get {code} - Return Link by code
-- /delete {code} - Delete Link";
+- /delete {code} - Delete Link
