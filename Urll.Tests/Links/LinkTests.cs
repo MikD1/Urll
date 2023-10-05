@@ -1,6 +1,6 @@
 ﻿using Urll.Links;
 
-namespace Urll.Tests;
+namespace Urll.Tests.Links;
 
 [TestClass]
 public class LinkTests

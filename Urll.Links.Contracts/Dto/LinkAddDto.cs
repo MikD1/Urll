@@ -2,4 +2,4 @@
 
 public record LinkAddDto(
     string Url,
-    string Code);
+    string? Code);

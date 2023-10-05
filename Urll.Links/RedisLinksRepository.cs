@@ -69,6 +69,13 @@ public class RedisLinksRepository : ILinksRepository
         return await db.KeyDeleteAsync(LinkKeyPrefix + code);
     }
 
+    public async Task<long> GetNextId()
+    {
+        IDatabase db = _connection.GetDatabase();
+        long id = await db.StringIncrementAsync(NextNumberKey);
+        return id;
+    }
+
     private bool TryDeserializeLink(string? json, out Link? link)
     {
         if (json is null)
@@ -91,6 +98,7 @@ public class RedisLinksRepository : ILinksRepository
     }
 
     private const string LinkKeyPrefix = "link:";
+    private const string NextNumberKey = "next_id";
 
     private readonly ConnectionMultiplexer _connection;
 }

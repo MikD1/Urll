@@ -9,4 +9,6 @@ public interface ILinksRepository
     public Task<Link?> GetOrDefault(string code);
 
     public Task<bool> Delete(string code);
+
+    public Task<long> GetNextId();
 }

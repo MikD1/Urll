@@ -4,7 +4,7 @@ using Urll.Links.Contracts;
 using Urll.Links.Contracts.Dto;
 using Urll.TelegramBot;
 
-namespace Urll.Tests;
+namespace Urll.Tests.TelegramBot;
 
 [TestClass]
 public class CommandsExecutorTests
