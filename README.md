@@ -23,6 +23,7 @@ end
 
 
 ## Telegram bot commands
+- {url} - Add Link with generated code
 - {url} {code} - Add Link
 - /start - Show help
 - /list - List all Links

@@ -12,8 +12,8 @@ public interface ILinksClient
     Task<IApiResponse<LinkDto>> Get(string code);
 
     [Post("/api/links")]
-    Task<IApiResponse> Add(LinkAddDto link);
+    Task<IApiResponse<LinkDto>> Add(LinkAddDto link);
 
-    [Delete("/api/links/code")]
+    [Delete("/api/links/{code}")]
     Task<IApiResponse> Delete(string code);
 }

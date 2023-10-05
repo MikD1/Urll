@@ -40,6 +40,7 @@ public class CommandsExecutor
     private string GetHelpText()
     {
         return @"Commands
+{url} - Add Link with generated code
 {url} {code} - Add Link
 /start - Show help
 /list - List all Links
@@ -71,7 +72,11 @@ public class CommandsExecutor
             builder.AppendLine($"{link.Code}: {link.Url}");
         }
 
-        return builder.ToString();
+        string response = builder.Length > 0
+            ? builder.ToString()
+            : "No Links found";
+
+        return response;
     }
 
     private async Task<string> ExecuteGetCommand(string[] args)
@@ -108,19 +113,21 @@ public class CommandsExecutor
 
     private async Task<string> ExecuteAddCommand(string[] args)
     {
-        if (args.Length != 2)
+        if (args.Length != 1 && args.Length != 2)
         {
             return GetHelpText();
         }
 
-        LinkAddDto dto = new(args[0], args[1]);
-        IApiResponse apiResponse = await _linksClient.Add(dto);
-        if (!apiResponse.IsSuccessStatusCode)
+        string url = args[0];
+        string? code = args.Length is 2 ? args[1] : null;
+        LinkAddDto dto = new(url, code);
+        IApiResponse<LinkDto> apiResponse = await _linksClient.Add(dto);
+        if (!apiResponse.IsSuccessStatusCode || apiResponse.Content is null)
         {
             return GetErrorMessage(apiResponse);
         }
 
-        return "Link added";
+        return apiResponse.Content.Code;
     }
 
     private string GetErrorMessage(IApiResponse apiResponse)

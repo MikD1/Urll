@@ -18,6 +18,7 @@ public class CommandsExecutorTests
         string result = await commandsExecutor.Execute("/start");
 
         Assert.AreEqual(@"Commands
+{url} - Add Link with generated code
 {url} {code} - Add Link
 /start - Show help
 /list - List all Links
@@ -47,6 +48,21 @@ public class CommandsExecutorTests
     }
 
     [TestMethod]
+    public async Task Execute_ListCommand_NoLinks_ReturnsMessage()
+    {
+        Mock<ILinksClient> linksClientMock = new();
+        CommandsExecutor commandsExecutor = new(linksClientMock.Object);
+        LinkDto[] links = Array.Empty<LinkDto>();
+        HttpResponseMessage httpResponseMessage = new(System.Net.HttpStatusCode.OK);
+        ApiResponse<LinkDto[]> expectedResponse = new(httpResponseMessage, links, new RefitSettings());
+        linksClientMock.Setup(client => client.GetAll()).ReturnsAsync(expectedResponse);
+
+        string result = await commandsExecutor.Execute("/list");
+
+        Assert.AreEqual("No Links found", result);
+    }
+
+    [TestMethod]
     public async Task Execute_GetCommand_Success_ReturnsLinkUrl()
     {
         Mock<ILinksClient> linksClientMock = new();
@@ -62,17 +78,33 @@ public class CommandsExecutorTests
     }
 
     [TestMethod]
-    public async Task Execute_AddCommand_Success_ReturnsSuccessMessage()
+    public async Task Execute_AddCommandWithOneArg_Success_ReturnsCode()
     {
         Mock<ILinksClient> linksClientMock = new();
         CommandsExecutor commandsExecutor = new(linksClientMock.Object);
+        LinkDto link = new(DateTime.UtcNow, "http://example.com/1", "code1");
         HttpResponseMessage httpResponseMessage = new(System.Net.HttpStatusCode.OK);
-        ApiResponse<object> expectedResponse = new(httpResponseMessage, null, new RefitSettings());
+        ApiResponse<LinkDto> expectedResponse = new(httpResponseMessage, link, new RefitSettings());
         linksClientMock.Setup(client => client.Add(It.IsAny<LinkAddDto>())).ReturnsAsync(expectedResponse);
 
-        string result = await commandsExecutor.Execute("http://example.com/3 code3");
+        string result = await commandsExecutor.Execute("http://example.com/1");
 
-        Assert.AreEqual("Link added", result);
+        Assert.AreEqual("code1", result);
+    }
+
+    [TestMethod]
+    public async Task Execute_AddCommandWithTwoArgs_Success_ReturnsCode()
+    {
+        Mock<ILinksClient> linksClientMock = new();
+        CommandsExecutor commandsExecutor = new(linksClientMock.Object);
+        LinkDto link = new(DateTime.UtcNow, "http://example.com/1", "code1");
+        HttpResponseMessage httpResponseMessage = new(System.Net.HttpStatusCode.OK);
+        ApiResponse<LinkDto> expectedResponse = new(httpResponseMessage, link, new RefitSettings());
+        linksClientMock.Setup(client => client.Add(It.IsAny<LinkAddDto>())).ReturnsAsync(expectedResponse);
+
+        string result = await commandsExecutor.Execute("http://example.com/1 code1");
+
+        Assert.AreEqual("code1", result);
     }
 
     [TestMethod]
@@ -151,25 +183,10 @@ public class CommandsExecutorTests
         Mock<ILinksClient> linksClientMock = new();
         CommandsExecutor commandsExecutor = new(linksClientMock.Object);
 
-        string result = await commandsExecutor.Execute("arg1");
-
-        Assert.AreEqual(@"Commands
-{url} {code} - Add Link
-/start - Show help
-/list - List all Links
-/get {code} - Return Link by code
-/delete {code} - Delete Link", result);
-    }
-
-    [TestMethod]
-    public async Task Execute_AddCommand_InvalidArgs_ReturnsHelpText2()
-    {
-        Mock<ILinksClient> linksClientMock = new();
-        CommandsExecutor commandsExecutor = new(linksClientMock.Object);
-
         string result = await commandsExecutor.Execute("arg1 arg2 arg3");
 
         Assert.AreEqual(@"Commands
+{url} - Add Link with generated code
 {url} {code} - Add Link
 /start - Show help
 /list - List all Links
